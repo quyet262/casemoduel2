@@ -12,7 +12,7 @@ import java.util.*;
 public class ProductManager implements Constants {
     static Scanner scanner = new Scanner(System.in);
 
-    public static void menu() throws IOException {
+    public void menu() {
         System.out.println("-----CHƯƠNG TRÌNH QUẢN LÝ CỬA HÀNG ĐIỆN THOẠI-----");
         System.out.println("1. Thêm sản phẩm");
         System.out.println("2. Hiển thị sản phẩm");
@@ -24,61 +24,81 @@ public class ProductManager implements Constants {
         System.out.print("Chọn một tùy chọn: ");
     }
 
-    public static void addProduct() throws IOException {
-        System.out.println("Chọn loại thiết bị: ");
-        System.out.println("1. Thêm Laptop: ");
-        System.out.println("2. Thêm Smartphone: ");
-        System.out.println("3. Them Tablet: ");
-        int choie = Integer.parseInt(scanner.nextLine());
-        System.out.println("Nhập ID:");
-        String id = scanner.nextLine();
-        System.out.println("Nhập tên sản phẩm: ");
-        String name = scanner.nextLine();
-        System.out.println("Nhập Thương hiệu: ");
-        String brand = scanner.nextLine();
-        System.out.println("Nhập giá sản phẩm: ");
-        double price = Double.parseDouble(scanner.nextLine());
-        System.out.println("Nhập kích thước màn hình: ");
-        double screenSize = Double.parseDouble(scanner.nextLine());
-        Product product = null;
-        String fileName = "";
-        switch (choie) {
-            case 1:
-                System.out.println("Nhập kích thước RAM: ");
-                int ramSize = Integer.parseInt(scanner.nextLine());
-                System.out.println("Nhập dung lượng bộ nhớ: ");
-                int storageSizeLaptop = Integer.parseInt(scanner.nextLine());
-                product = new Laptop(id, name, brand, price, screenSize, ramSize, storageSizeLaptop);
-                fileName = Constants.laptopPath;
-                break;
-            case 2:
-                System.out.println("Nhập hệ điều hành: ");
-                String operatingSystem = scanner.nextLine();
-                System.out.println("Nhập Dung lượng Pin: ");
-                int batteryCapacity = Integer.parseInt(scanner.nextLine());
-                product = new Smartphone(id, name, brand, price, screenSize, operatingSystem, batteryCapacity);
-                fileName = Constants.smartPhonePath;
-                break;
-            case 3:
-                System.out.println("Có Mạng di động không?(true/false");
-                boolean hasCellular = Boolean.parseBoolean(scanner.nextLine());
-                System.out.println("Nhâph dung lượng bộ nhớ: ");
-                int storageSizeTablet = Integer.parseInt(scanner.nextLine());
-                product = new Tablet(id, name, brand, price, screenSize, hasCellular, storageSizeTablet);
-                fileName = Constants.tabletPath;
-                break;
-            default:
-                System.out.println("Lựa chọn khoong hơp lệ");
+    public void addProduct() {
+        try {
+            System.out.println("Chọn loại thiết bị: ");
+            System.out.println("1. Thêm Laptop: ");
+            System.out.println("2. Thêm Smartphone: ");
+            System.out.println("3. Them Tablet: ");
+            int choie = Integer.parseInt(scanner.nextLine());
+            System.out.println("Nhập ID:");
+            String id = scanner.nextLine();
+            System.out.println("Nhập tên sản phẩm: ");
+            String name = scanner.nextLine();
+            String brand = selectManufacturer(Constants.brandPath);
+            System.out.println("Nhập giá sản phẩm: ");
+            double price = Double.parseDouble(scanner.nextLine());
+            System.out.println("Nhập kích thước màn hình: ");
+            double screenSize = Double.parseDouble(scanner.nextLine());
+            Product product = null;
+            String fileName = "";
+            switch (choie) {
+                case 1:
+                    System.out.println("Nhập kích thước RAM: ");
+                    int ramSize = Integer.parseInt(scanner.nextLine());
+                    System.out.println("Nhập dung lượng bộ nhớ: ");
+                    int storageSizeLaptop = Integer.parseInt(scanner.nextLine());
+                    product = new Laptop(id, name, brand, price, screenSize, ramSize, storageSizeLaptop);
+                    fileName = Constants.laptopPath;
+                    break;
+                case 2:
+                    System.out.println("Nhập hệ điều hành: ");
+                    String operatingSystem = scanner.nextLine();
+                    System.out.println("Nhập Dung lượng Pin: ");
+                    int batteryCapacity = Integer.parseInt(scanner.nextLine());
+                    product = new Smartphone(id, name, brand, price, screenSize, operatingSystem, batteryCapacity);
+                    fileName = Constants.smartPhonePath;
+                    break;
+                case 3:
+                    System.out.println("Có Mạng di động không?(true/false)");
+                    boolean hasCellular = Boolean.parseBoolean(scanner.nextLine());
+                    System.out.println("Nhập dung lượng bộ nhớ: ");
+                    int storageSizeTablet = Integer.parseInt(scanner.nextLine());
+                    product = new Tablet(id, name, brand, price, screenSize, hasCellular, storageSizeTablet);
+                    fileName = Constants.tabletPath;
+                    break;
+                default:
+                    System.out.println("Lựa chọn không hơp lệ");
 
+            }
+
+            List<Product> products = loadProductFromFile(fileName);
+            products.add(product);
+            saveProductToFile(fileName, products);
+            System.out.println("Thêm sản phẩm thành công");
         }
-        List<Product> products = loadProductFromFile(fileName);
-        products.add(product);
-        saveProductToFile(fileName, products);
-        System.out.println("Theem sản phẩm thành công");
-
+       catch (IOException e) {
+            e.printStackTrace();
+       }
     }
 
-    public static void showProducts() throws IOException {
+
+    private static String selectManufacturer(String fileName) throws IOException {
+        List<String> manufacturers = ReadAndWriteFile.readFile(fileName);
+        System.out.println("Nhập thương hiệu");
+        for (int i = 0; i < manufacturers.size(); i++) {
+            System.out.println(i + 1 + ". " + manufacturers.get(i));
+        }
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        if (choice < 1 || choice > manufacturers.size()) {
+            System.out.println("Lựa chọn không hợp lệ, mặc định chọn hãng sản xuất đầu tiên.");
+            choice = 1;
+        }
+        return manufacturers.get(choice - 1);
+    }
+
+    public void showProducts() {
         System.out.println("Chọn loại sản phẩm muốn hiển thị: ");
         System.out.println("1. Máy tính xách tay: ");
         System.out.println("2. Điện thoại di động: ");
@@ -99,14 +119,19 @@ public class ProductManager implements Constants {
                 System.out.println("Lựa chọn không hợp lệ");
                 return;
         }
-        List<Product> products = loadProductFromFile(fileName);
-        for (Product product : products) {
-            product.displayDetails();
+        try {
+            List<Product> products = loadProductFromFile(fileName);
+            for (Product product : products) {
+                product.displayDetails();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
 
-    public static void editProduct() throws IOException {
+    public void editProduct() {
         System.out.println("Chọn loại sản phẩm muốn sửa: ");
         System.out.println("1. Máy tính xách tay: ");
         System.out.println("2. Điện thoại di động: ");
@@ -114,24 +139,28 @@ public class ProductManager implements Constants {
         int choice = Integer.parseInt(scanner.nextLine());
         String fileName = "";
         List<Product> products = new ArrayList<>();
-
-        switch (choice) {
-            case 1:
-                fileName = Constants.laptopPath;
-                products = loadProductFromFile(fileName);
-                break;
-            case 2:
-                fileName = Constants.smartPhonePath;
-                products = loadProductFromFile(fileName);
-                break;
-            case 3:
-                fileName = Constants.tabletPath;
-                products = loadProductFromFile(fileName);
-                break;
-            default:
-                System.out.println("Lựa chọn không hợp lệ");
-                return;
+        try {
+            switch (choice) {
+                case 1:
+                    fileName = Constants.laptopPath;
+                    products = loadProductFromFile(fileName);
+                    break;
+                case 2:
+                    fileName = Constants.smartPhonePath;
+                    products = loadProductFromFile(fileName);
+                    break;
+                case 3:
+                    fileName = Constants.tabletPath;
+                    products = loadProductFromFile(fileName);
+                    break;
+                default:
+                    System.out.println("Lựa chọn không hợp lệ");
+                    return;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
 
         System.out.println("Nhập ID sản phẩm muốn sửa: ");
         String idToEdit = scanner.nextLine();
@@ -169,67 +198,81 @@ public class ProductManager implements Constants {
                 break;
             }
         }
+        try {
+            if (found) {
+                saveProductToFile(fileName, products);
+                System.out.println("Sửa sản phẩm thành công.");
+            } else {
+                System.out.println("Không tìm thấy sản phẩm với ID đã nhập.");
+            }
+        } catch (IOException e) {
 
-        if (found) {
-            saveProductToFile(fileName, products);
-            System.out.println("Sửa sản phẩm thành công.");
-        } else {
-            System.out.println("Không tìm thấy sản phẩm với ID đã nhập.");
+            e.printStackTrace();
         }
+
     }
 
-    public static void searchProduct() throws IOException {
+    public void searchProduct() {
         System.out.println("Nhập tên hoặc ID sản phẩm muốn tìm: ");
         String keyword = scanner.nextLine().toLowerCase();
+        try {
+            List<Product> allProducts = new ArrayList<>();
+            allProducts.addAll(loadProductFromFile(Constants.laptopPath));
+            allProducts.addAll(loadProductFromFile(Constants.smartPhonePath));
+            allProducts.addAll(loadProductFromFile(Constants.tabletPath));
 
-        List<Product> allProducts = new ArrayList<>();
-        allProducts.addAll(loadProductFromFile(Constants.laptopPath));
-        allProducts.addAll(loadProductFromFile(Constants.smartPhonePath));
-        allProducts.addAll(loadProductFromFile(Constants.tabletPath));
-
-        List<Product> result = new ArrayList<>();
-        for (Product product : allProducts) {
-            if (product.getName().toLowerCase().contains(keyword) || product.getId().toLowerCase().contains(keyword)) {
-                result.add(product);
+            List<Product> result = new ArrayList<>();
+            for (Product product : allProducts) {
+                if (product.getName().toLowerCase().contains(keyword) || product.getId().toLowerCase().contains(keyword)) {
+                    result.add(product);
+                }
             }
+
+            if (!result.isEmpty()) {
+                for (Product product : result) {
+                    product.displayDetails();
+                }
+            } else {
+                System.out.println("Không tìm thấy sản phẩm phù hợp.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        if (!result.isEmpty()) {
-            for (Product product : result) {
-                product.displayDetails();
-            }
-        } else {
-            System.out.println("Không tìm thấy sản phẩm phù hợp.");
-        }
     }
 
-    public static void sortProducts() throws IOException {
+    public void sortProducts() {
         System.out.println("Chọn loại sắp xếp: ");
         System.out.println("1. Sắp xếp theo giá: ");
         System.out.println("2. Sắp xếp theo tên: ");
         int choice = Integer.parseInt(scanner.nextLine());
+        try {
+            List<Product> allProducts = new ArrayList<>();
+            allProducts.addAll(loadProductFromFile(Constants.laptopPath));
+            allProducts.addAll(loadProductFromFile(Constants.smartPhonePath));
+            allProducts.addAll(loadProductFromFile(Constants.tabletPath));
 
-        List<Product> allProducts = new ArrayList<>();
-        allProducts.addAll(loadProductFromFile(Constants.laptopPath));
-        allProducts.addAll(loadProductFromFile(Constants.smartPhonePath));
-        allProducts.addAll(loadProductFromFile(Constants.tabletPath));
+            if (choice == 1) {
+                allProducts.sort(Comparator.comparingDouble(Product::getPrice));
+            } else if (choice == 2) {
+                allProducts.sort(Comparator.comparing(Product::getName));
+            } else {
+                System.out.println("Lựa chọn không hợp lệ.");
+                return;
+            }
 
-        if (choice == 1) {
-            allProducts.sort(Comparator.comparingDouble(Product::getPrice));
-        } else if (choice == 2) {
-            allProducts.sort(Comparator.comparing(Product::getName));
-        } else {
-            System.out.println("Lựa chọn không hợp lệ.");
-            return;
+            for (Product product : allProducts) {
+                product.displayDetails();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        for (Product product : allProducts) {
-            product.displayDetails();
-        }
+
     }
 
 
-    public static void deleteProduct() throws IOException {
+    public void deleteProduct() {
         System.out.println("Bạn muốn xoá sản phẩm nào?");
         System.out.println("1. Máy tính xách tay: ");
         System.out.println("2. Điện thoại di động: ");
@@ -237,44 +280,48 @@ public class ProductManager implements Constants {
         int choice = Integer.parseInt(scanner.nextLine());
         String fileName = "";
         List<Product> products;
-
-        switch (choice) {
-            case 1:
-                fileName = Constants.laptopPath;
-                products = loadProductFromFile(fileName);
-                break;
-            case 2:
-                fileName = Constants.smartPhonePath;
-                products = loadProductFromFile(fileName);
-                break;
-            case 3:
-                fileName = Constants.tabletPath;
-                products = loadProductFromFile(fileName);
-                break;
-            default:
-                System.out.println("Lựa chọn không hợp lệ");
-                return;
-        }
-
-        System.out.println("Nhập ID sản phẩm muốn xoá: ");
-        String idToDelete = scanner.nextLine();
-        boolean found = false;
-
-        Iterator<Product> iterator = products.iterator();
-        while (iterator.hasNext()) {
-            Product product = iterator.next();
-            if (product.getId().equals(idToDelete)) {
-                iterator.remove();
-                found = true;
+        try {
+            switch (choice) {
+                case 1:
+                    fileName = Constants.laptopPath;
+                    products = loadProductFromFile(fileName);
+                    break;
+                case 2:
+                    fileName = Constants.smartPhonePath;
+                    products = loadProductFromFile(fileName);
+                    break;
+                case 3:
+                    fileName = Constants.tabletPath;
+                    products = loadProductFromFile(fileName);
+                    break;
+                default:
+                    System.out.println("Lựa chọn không hợp lệ");
+                    return;
             }
+
+            System.out.println("Nhập ID sản phẩm muốn xoá: ");
+            String idToDelete = scanner.nextLine();
+            boolean found = false;
+
+            Iterator<Product> iterator = products.iterator();
+            while (iterator.hasNext()) {
+                Product product = iterator.next();
+                if (product.getId().equals(idToDelete)) {
+                    iterator.remove();
+                    found = true;
+                }
+            }
+
+            if (found) {
+                saveProductToFile(fileName, products);
+                System.out.println("Xoá sản phẩm thành công.");
+            } else {
+                System.out.println("Không tìm thấy sản phẩm với ID đã nhập.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        if (found) {
-            saveProductToFile(fileName, products);
-            System.out.println("Xoá sản phẩm thành công.");
-        } else {
-            System.out.println("Không tìm thấy sản phẩm với ID đã nhập.");
-        }
     }
 
 
@@ -310,7 +357,7 @@ public class ProductManager implements Constants {
 
     }
 
-    public static void saveProductToFile(String fileName, List<Product> products) throws IOException {
+    private static void saveProductToFile(String fileName, List<Product> products) throws IOException {
         List<String> productsToSave = new ArrayList<>();
         for (Product product : products) {
             productsToSave.add(product.getInfoToFile());
@@ -320,16 +367,4 @@ public class ProductManager implements Constants {
             ReadAndWriteFile.writeFile(fileName, line, true);
         }
     }
-
-
-    public static void saveProductToFileNot(String fileName, List<Product> products) throws IOException {
-        List<String> productsToSave = new ArrayList<>();
-        for (Product product : products) {
-            productsToSave.add(product.getInfoToFile());
-        }
-        for (String line : productsToSave) {
-            ReadAndWriteFile.writeFile(fileName, line, false);
-        }
-    }
-
 }

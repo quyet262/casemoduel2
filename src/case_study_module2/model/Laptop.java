@@ -35,14 +35,17 @@ public class Laptop extends Product {
                 getRamSize() + "," + getStorageSize();
     }
 
-
-
-
     @Override
     public void displayDetails() {
         System.out.println("Laptop [ID=" + id + ", Name=" + name + ", Brand=" + brand + ", Price=" + price + " VNĐ, Screen= " + screenSize +
                 " inch, RAM Size=" + ramSize + "GB, Storage Size=" + storageSize + "GB]");
     }
 
+    @Override
+    public String toString() {
+        return "Laptop{" + super.toString() +
+                "ramSize=" + ramSize +
+                ", storageSize=" + storageSize +
+                '}';
+    }
 }
-

@@ -22,7 +22,7 @@ public class ReadAndWriteFile {
         File file = new File(fileName);
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, append))) {
             if (!append) {
-                bw.write(line); // Xóa nội dung cũ
+                bw.write(line);
             } else {
                 bw.write(line);
                 bw.newLine();

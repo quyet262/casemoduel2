@@ -19,7 +19,6 @@ public class Tablet extends Product {
         this.hasCellular = hasCellular;
     }
 
-
     public int getStorageSize() {
         return storageSize;
     }
@@ -39,5 +38,12 @@ public class Tablet extends Product {
         System.out.println("Tablet [ID=" + id + ", Name=" + name + ", Brand=" + brand + ", Price=" + price +
                 " VNĐ,  Screen Size= " + screenSize +" inch, Cellular=" + (getHasCellular() ? "Yes" : "No") + ", Storage Size=" + storageSize + "GB]");
     }
-}
 
+    @Override
+    public String toString() {
+        return "Tablet{" + super.toString() +
+                "hasCellular=" + hasCellular +
+                ", storageSize=" + storageSize +
+                '}';
+    }
+}

@@ -26,7 +26,6 @@ public class Smartphone extends Product {
         this.operatingSystem = operatingSystem;
     }
 
-
     public int getBatteryCapacity() {
         return batteryCapacity;
     }
@@ -46,5 +45,12 @@ public class Smartphone extends Product {
         System.out.println("Smartphone [ID=" + id + ", Name=" + name + ", Brand=" + brand + ", Price=" + price +
                 " VNĐ, Screen Size=  " + screenSize +" inch, Operating System=" + operatingSystem + ", Battery Capacity=" + batteryCapacity + "mAh]");
     }
-}
 
+    @Override
+    public String toString() {
+        return "Smartphone{" + super.toString() +
+                "operatingSystem='" + operatingSystem + '\'' +
+                ", batteryCapacity=" + batteryCapacity +
+                '}';
+    }
+}

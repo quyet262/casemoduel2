@@ -7,7 +7,6 @@ public abstract class Product {
     protected double price;
     protected double screenSize;
 
-
     public Product() {
     }
 
@@ -62,7 +61,6 @@ public abstract class Product {
     public abstract void displayDetails();
     public abstract String getInfoToFile();
 
-
     @Override
     public String toString() {
         return "Product{" +
@@ -74,4 +72,3 @@ public abstract class Product {
                 '}';
     }
 }
-

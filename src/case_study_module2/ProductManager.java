@@ -76,10 +76,9 @@ public class ProductManager implements Constants {
             products.add(product);
             saveProductToFile(fileName, products);
             System.out.println("Thêm sản phẩm thành công");
-        }
-       catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-       }
+        }
     }
 
 
